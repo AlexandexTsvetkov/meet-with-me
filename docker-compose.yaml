@@ -1,0 +1,19 @@
+version: '3.9'
+
+networks:
+  app-tier:
+    driver: bridge
+
+services:
+
+  post_db:
+    image: bitnami/postgresql:17
+    container_name: meet_db
+    ports:
+      - "6666:5432"
+    environment:
+      POSTGRESQL_USERNAME: meet
+      POSTGRESQL_PASSWORD: meet
+      POSTGRESQL_DATABASE: meet_db
+    networks:
+      - app-tier
