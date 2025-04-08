@@ -17,14 +17,11 @@ public class Invitation {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "create_date", nullable = false)
-    private LocalDateTime created;
-
     @ManyToOne
     @JoinColumn(name = "meeting_id")
     private Meeting meeting;
 
-    @ManyToOne
+    @OneToOne
     @JoinColumn(name = "invited_id")
     private User invited;
 

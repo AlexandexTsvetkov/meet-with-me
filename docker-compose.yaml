@@ -10,7 +10,7 @@ services:
     image: bitnami/postgresql:17
     container_name: meet_db
     ports:
-      - "6666:5432"
+      - "5432:5432"
     environment:
       POSTGRESQL_USERNAME: meet
       POSTGRESQL_PASSWORD: meet

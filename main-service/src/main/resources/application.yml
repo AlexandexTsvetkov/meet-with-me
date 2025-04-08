@@ -4,7 +4,7 @@ spring:
 
   datasource:
     driver-class-name: org.postgresql.Driver
-    url: jdbc:postgresql://localhost:6666/meet_db
+    url: jdbc:postgresql://localhost:5432/meet_db
     username: meet
     password: meet
 
@@ -21,7 +21,7 @@ spring:
       mode: always
 
 server:
-  port: 9090
+  port: 8080
 
 application:
   security:
