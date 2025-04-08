@@ -10,7 +10,7 @@ CREATE TABLE IF NOT EXISTS app_user (
 
 CREATE TABLE IF NOT EXISTS meeting (
     id SERIAL PRIMARY KEY,
-    create_on TIMESTAMP,
+    create_on TIMESTAMP DEFAULT (CURRENT_DATE),
     description VARCHAR(255),
     meeting_date TIMESTAMP,
     initiator_id BIGINT REFERENCES app_user(id),
