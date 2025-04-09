@@ -1,5 +1,7 @@
 package ru.aston.meet.controller.user;
 
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.constraints.Email;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -15,12 +17,14 @@ import ru.aston.meet.service.user.UserService;
 @RequestMapping("/users")
 @RequiredArgsConstructor
 @Validated
+@Tag(name = "User Controller", description = "Managing user")
+@SecurityRequirement(name = "Bearer Authentication")
 public class UserController {
 
     private final UserService userService;
 
     @GetMapping
-    public ResponseEntity<UserDto> getUserInfo (@RequestParam @Email String email) {
+    public ResponseEntity<UserDto> getUserInfo(@RequestParam @Email String email) {
         return ResponseEntity.ok(userService.getUserInfo(email));
     }
 }

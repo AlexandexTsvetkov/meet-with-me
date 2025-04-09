@@ -1,10 +1,13 @@
 package ru.aston.meet.controller.meeting;
 
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.lang.Nullable;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -13,17 +16,23 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import ru.aston.meet.dto.meeting.MeetingDto;
-import ru.aston.meet.model.meeting.Meeting;
+import ru.aston.meet.dto.meeting.MeetingResponseDto;
 import ru.aston.meet.model.user.User;
 import ru.aston.meet.service.meeting.MeetingService;
+
+import java.time.LocalDate;
+import java.util.List;
 
 @RestController
 @Slf4j
 @RequiredArgsConstructor
 @RequestMapping(value = MeetingController.REST_URL, produces = MediaType.APPLICATION_JSON_VALUE)
+@Tag(name = "Meeting Controller", description = "Managing meetings")
+@SecurityRequirement(name = "Bearer Authentication")
 public class MeetingController {
 
     static final String REST_URL = "/meetings";
@@ -53,8 +62,16 @@ public class MeetingController {
     }
 
     @GetMapping("/{meetingId}")
-    public Meeting get(@PathVariable long meetingId) {
+    public MeetingResponseDto get(@PathVariable long meetingId) {
         log.debug("Get the meeting with id {}", meetingId);
-        return meetingService.findById(meetingId);
+        return meetingService.get(meetingId);
+    }
+
+    @GetMapping()
+    public List<MeetingResponseDto> getAll(
+            @RequestParam @Nullable LocalDate eventDate,
+            @RequestParam @Nullable List<Long> participantsId) {
+        log.debug("Get meetings for date {} and participants {}", eventDate, participantsId);
+        return meetingService.getMeetingsByDateForParticipants(eventDate, participantsId);
     }
 }

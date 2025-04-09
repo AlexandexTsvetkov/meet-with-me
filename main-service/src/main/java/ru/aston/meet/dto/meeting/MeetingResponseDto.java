@@ -1,20 +1,20 @@
 package ru.aston.meet.dto.meeting;
 
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
+import java.util.Set;
 
 /*
- * Входной DTO (Data Transfer Object) для представления информации о встрече.
+ * Выходной DTO (Data Transfer Object) для представления информации о встрече.
  */
+
 @Getter
 @Setter
 @NoArgsConstructor
-public class MeetingDto {
+public class MeetingResponseDto {
 
     /*
      * Идентификатор встречи.
@@ -24,24 +24,35 @@ public class MeetingDto {
     /*
      * Название встречи.
      */
-    @NotBlank
     private String title;
 
     /*
      * Описание встерчи.
      */
-    @NotBlank
     private String description;
+
+    /*
+     * Дата создания встречи.
+     */
+    private LocalDateTime createOn;
 
     /*
      * Дата прведения встречи.
      */
-    @NotNull
     private LocalDateTime eventDate;
+
+    /*
+     * Идентификатор создателя встречи.
+     */
+    private Long initiatorId;
 
     /*
      * Место проведения встерчи.
      */
-    @NotBlank
     private String location;
+
+    /*
+     * Список участников встречи.
+     */
+    private Set<Long> participants;
 }
