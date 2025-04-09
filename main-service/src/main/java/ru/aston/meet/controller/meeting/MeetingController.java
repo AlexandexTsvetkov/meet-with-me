@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.lang.Nullable;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -13,12 +14,16 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import ru.aston.meet.dto.meeting.MeetingDto;
 import ru.aston.meet.model.meeting.Meeting;
 import ru.aston.meet.model.user.User;
 import ru.aston.meet.service.meeting.MeetingService;
+
+import java.time.LocalDate;
+import java.util.List;
 
 @RestController
 @Slf4j
@@ -56,5 +61,13 @@ public class MeetingController {
     public Meeting get(@PathVariable long meetingId) {
         log.debug("Get the meeting with id {}", meetingId);
         return meetingService.findById(meetingId);
+    }
+
+    @GetMapping()
+    public List<Meeting> getAll(
+            @RequestParam @Nullable LocalDate eventDate,
+            @RequestParam @Nullable List<Long> participantsId) {
+        log.debug("Get meetings for date {} and participants {}", eventDate, participantsId);
+        return meetingService.getMeetingsByDateForParticipants(eventDate, participantsId);
     }
 }

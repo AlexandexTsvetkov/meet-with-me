@@ -13,6 +13,10 @@ import ru.aston.meet.model.user.User;
 import ru.aston.meet.repository.meeting.MeetingRepository;
 import ru.aston.meet.service.meeting.MeetingService;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.util.List;
 import java.util.Objects;
 
 @Service
@@ -37,6 +41,17 @@ public class MeetingServiceImpl implements MeetingService {
         log.debug("Find meeting with id = {}", meetingId);
         return meetingRepository.findById(meetingId)
                 .orElseThrow(() -> new NotFoundException("Meeting with id = " + meetingId + " not found"));
+    }
+
+    @Override
+    public List<Meeting> getMeetingsByDateForParticipants(LocalDate eventDate, List<Long> participantsId) {
+        log.debug("Find meetings for date {} and participants {}", eventDate, participantsId);
+        LocalDateTime start = eventDate != null ? eventDate.atStartOfDay() : null;
+        LocalDateTime end = eventDate != null ? eventDate.atTime(LocalTime.MAX) : null;
+        if (participantsId != null && participantsId.isEmpty()) {
+            participantsId = null;
+        }
+        return meetingRepository.findByDateRangeAndParticipants(start, end, participantsId);
     }
 
     @Override

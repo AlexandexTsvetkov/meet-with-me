@@ -4,6 +4,9 @@ import ru.aston.meet.dto.meeting.MeetingDto;
 import ru.aston.meet.model.meeting.Meeting;
 import ru.aston.meet.model.user.User;
 
+import java.time.LocalDate;
+import java.util.List;
+
 public interface MeetingService {
 
     MeetingDto create(MeetingDto meetingDto, User user);
@@ -13,4 +16,6 @@ public interface MeetingService {
     MeetingDto update(long meetingId, MeetingDto meetingDto, long userId);
 
     void delete(long meetingId, Long userId);
+
+    List<Meeting> getMeetingsByDateForParticipants(LocalDate eventDate, List<Long> participantsId);
 }
