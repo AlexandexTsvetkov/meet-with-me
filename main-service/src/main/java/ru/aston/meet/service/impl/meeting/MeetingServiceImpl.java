@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.aston.meet.dto.meeting.MeetingDto;
 import ru.aston.meet.exception.AuthenticationException;
+import ru.aston.meet.exception.InvitationException;
 import ru.aston.meet.exception.NotFoundException;
 import ru.aston.meet.mapper.meeting.MeetingMapper;
 import ru.aston.meet.model.meeting.Meeting;
@@ -18,6 +19,7 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 
 @Service
 @Slf4j
@@ -83,6 +85,39 @@ public class MeetingServiceImpl implements MeetingService {
 
         meetingRepository.deleteById(meetingId);
         log.debug("Meeting with id {} successfully deleted by user with id {}", meetingId, userId);
+    }
+
+    @Override
+    public void addConfirmedParticipants(Meeting meeting, Long userId) {
+        log.debug("Trying to add participant with id {} to meeting with id {}", userId, meeting.getId());
+
+        Set<Long> participants = meeting.getParticipants();
+        Long meetingId = meeting.getId();
+
+        if (participants.contains(userId)) {
+            throw new InvitationException("User with id " + userId + " is already a participant of meeting with id " + meetingId);
+        }
+
+        participants.add(userId);
+        meetingRepository.save(meeting);
+        log.debug("Participant with id {} was added to meeting with id {}", userId, meetingId);
+
+    }
+
+    @Override
+    public void deleteConfirmedParticipants(Meeting meeting, Long userId) {
+        log.debug("Trying to remove participant with id {} from meeting with id {}", userId, meeting.getId());
+
+        Set<Long> participants = meeting.getParticipants();
+        Long meetingId = meeting.getId();
+
+        if (!participants.contains(userId)) {
+            throw new InvitationException("User with id " + userId + " is not a participant of meeting with id " + meetingId);
+        }
+
+        participants.remove(userId);
+        meetingRepository.save(meeting);
+        log.debug("Participant with id {} was removed from meeting with id {}", userId, meetingId);
     }
 
     private void verifyCanEdit(Meeting meeting, long userId) {

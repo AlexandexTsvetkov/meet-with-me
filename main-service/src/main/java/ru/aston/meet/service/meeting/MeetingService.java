@@ -18,4 +18,8 @@ public interface MeetingService {
     void delete(long meetingId, Long userId);
 
     List<Meeting> getMeetingsByDateForParticipants(LocalDate eventDate, List<Long> participantsId);
+
+    void addConfirmedParticipants(Meeting meeting, Long serId);
+
+    void deleteConfirmedParticipants(Meeting meeting, Long serId);
 }

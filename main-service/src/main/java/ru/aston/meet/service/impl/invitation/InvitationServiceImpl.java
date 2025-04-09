@@ -1,12 +1,14 @@
 package ru.aston.meet.service.impl.invitation;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.aston.meet.dto.invitation.CreateInvitationDto;
 import ru.aston.meet.dto.invitation.InvitationDto;
 import ru.aston.meet.dto.invitation.UpdateInvitationStatusDto;
 import ru.aston.meet.exception.AlreadyExistsException;
+import ru.aston.meet.exception.InvitationException;
 import ru.aston.meet.exception.NotFoundException;
 import ru.aston.meet.mapper.invitation.InvitationMapper;
 import ru.aston.meet.model.invitation.Invitation;
@@ -17,12 +19,15 @@ import ru.aston.meet.repository.invitation.InvitationRepository;
 import ru.aston.meet.repository.meeting.MeetingRepository;
 import ru.aston.meet.repository.user.UserRepository;
 import ru.aston.meet.service.invitation.InvitationService;
+import ru.aston.meet.service.meeting.MeetingService;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
+@Slf4j
 @RequiredArgsConstructor
 public class InvitationServiceImpl implements InvitationService {
 
@@ -30,6 +35,7 @@ public class InvitationServiceImpl implements InvitationService {
     private final InvitationRepository invitationRepository;
     private final InvitationMapper invitationMapper;
     private final MeetingRepository meetingRepository;
+    private final MeetingService meetingService;
 
     @Override
     @Transactional
@@ -75,8 +81,26 @@ public class InvitationServiceImpl implements InvitationService {
     @Override
     @Transactional
     public InvitationDto updateInvitationStatus(UpdateInvitationStatusDto request) {
-        Invitation invitation = invitationRepository.findById(request.getId()).orElseThrow(() -> new NotFoundException("Invitation not found, id: " + request.getId()));
-        return invitationMapper.toInvitationDto(invitationRepository.save(invitationMapper.mapInvitationToUpdate(request, invitation)));
+        log.debug("Attempt to change status for invitation with id = {}", request.getId());
+        Invitation invitation = findById(request.getId());
+        Meeting meeting = invitation.getMeeting();
+
+        if (meeting.getEventDate().isBefore(LocalDateTime.now())) {
+            throw new InvitationException("You can't change invitation status for for a past meeting with id " + meeting.getId());
+        }
+
+        Long userId = invitation.getInvited().getId();
+        InvitationStatus newStatus = request.getStatus();
+
+        if (newStatus == InvitationStatus.CONFIRMED) {
+            meetingService.addConfirmedParticipants(meeting, userId);
+        } else if (newStatus == InvitationStatus.CANCELLED) {
+            meetingService.deleteConfirmedParticipants(meeting, userId);
+        }
+
+        Invitation updated = invitationMapper.mapInvitationToUpdate(request, invitation);
+        log.debug("Change status {} for invitation with id = {}", newStatus, request.getId());
+        return invitationMapper.toInvitationDto(invitationRepository.save(updated));
     }
 
     @Override
@@ -87,5 +111,11 @@ public class InvitationServiceImpl implements InvitationService {
     @Override
     public List<InvitationDto> invitationListByInvited(Long id) {
         return invitationRepository.findByInvitedId(id).stream().map(invitationMapper::toInvitationDto).collect(Collectors.toList());
+    }
+
+    private Invitation findById(long invitationId) {
+        log.debug("Find invitation with id = {}", invitationId);
+        return invitationRepository.findById(invitationId)
+                .orElseThrow(() -> new NotFoundException("Invitation with id = " + invitationId + " not found"));
     }
 }
