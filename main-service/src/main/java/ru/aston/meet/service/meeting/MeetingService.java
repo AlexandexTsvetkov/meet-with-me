@@ -1,6 +1,7 @@
 package ru.aston.meet.service.meeting;
 
 import ru.aston.meet.dto.meeting.MeetingDto;
+import ru.aston.meet.dto.meeting.MeetingResponseDto;
 import ru.aston.meet.model.meeting.Meeting;
 import ru.aston.meet.model.user.User;
 
@@ -13,11 +14,13 @@ public interface MeetingService {
 
     Meeting findById(long meetingId);
 
+    MeetingResponseDto get(long meetingId);
+
     MeetingDto update(long meetingId, MeetingDto meetingDto, long userId);
 
     void delete(long meetingId, Long userId);
 
-    List<Meeting> getMeetingsByDateForParticipants(LocalDate eventDate, List<Long> participantsId);
+    List<MeetingResponseDto> getMeetingsByDateForParticipants(LocalDate eventDate, List<Long> participantsId);
 
     void addConfirmedParticipants(Meeting meeting, Long serId);
 

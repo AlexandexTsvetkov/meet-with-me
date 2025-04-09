@@ -1,10 +1,13 @@
 package ru.aston.meet.service.impl.meeting;
 
+import jakarta.persistence.criteria.Join;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.aston.meet.dto.meeting.MeetingDto;
+import ru.aston.meet.dto.meeting.MeetingResponseDto;
 import ru.aston.meet.exception.AuthenticationException;
 import ru.aston.meet.exception.InvitationException;
 import ru.aston.meet.exception.NotFoundException;
@@ -32,7 +35,7 @@ public class MeetingServiceImpl implements MeetingService {
     @Override
     public MeetingDto create(MeetingDto meetingDto, User user) {
         Meeting newMeeting = meetingMapper.toMeeting(meetingDto);
-
+        newMeeting.setInitiator(user);
         MeetingDto savedMeeting = meetingMapper.toMeetingDto(meetingRepository.save(newMeeting));
         log.debug("New meeting {} was created", savedMeeting);
         return savedMeeting;
@@ -46,14 +49,33 @@ public class MeetingServiceImpl implements MeetingService {
     }
 
     @Override
-    public List<Meeting> getMeetingsByDateForParticipants(LocalDate eventDate, List<Long> participantsId) {
+    public MeetingResponseDto get(long meetingId) {
+        return meetingMapper.toMeetingResponseDto(findById(meetingId));
+    }
+
+    @Override
+    public List<MeetingResponseDto> getMeetingsByDateForParticipants(LocalDate eventDate, List<Long> participantsId) {
         log.debug("Find meetings for date {} and participants {}", eventDate, participantsId);
-        LocalDateTime start = eventDate != null ? eventDate.atStartOfDay() : null;
-        LocalDateTime end = eventDate != null ? eventDate.atTime(LocalTime.MAX) : null;
-        if (participantsId != null && participantsId.isEmpty()) {
-            participantsId = null;
+        Specification<Meeting> spec = Specification.where(null);
+
+        if (eventDate != null) {
+            LocalDateTime start = eventDate.atStartOfDay();
+            LocalDateTime end = eventDate.atTime(LocalTime.MAX);
+
+            spec = spec.and((root, query, cb) ->
+                    cb.between(root.get("eventDate"), start, end));
         }
-        return meetingRepository.findByDateRangeAndParticipants(start, end, participantsId);
+
+        if (participantsId != null && !participantsId.isEmpty()) {
+            spec = spec.and((root, query, cb) -> {
+                Join<Meeting, Long> participantsJoin = root.join("participants");
+                return participantsJoin.in(participantsId);
+            });
+        }
+
+        return meetingRepository.findAll(spec).stream()
+                .map(meetingMapper::toMeetingResponseDto)
+                .toList();
     }
 
     @Override

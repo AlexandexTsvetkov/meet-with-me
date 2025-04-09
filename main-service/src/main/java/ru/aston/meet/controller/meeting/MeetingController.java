@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import ru.aston.meet.dto.meeting.MeetingDto;
-import ru.aston.meet.model.meeting.Meeting;
+import ru.aston.meet.dto.meeting.MeetingResponseDto;
 import ru.aston.meet.model.user.User;
 import ru.aston.meet.service.meeting.MeetingService;
 
@@ -58,13 +58,13 @@ public class MeetingController {
     }
 
     @GetMapping("/{meetingId}")
-    public Meeting get(@PathVariable long meetingId) {
+    public MeetingResponseDto get(@PathVariable long meetingId) {
         log.debug("Get the meeting with id {}", meetingId);
-        return meetingService.findById(meetingId);
+        return meetingService.get(meetingId);
     }
 
     @GetMapping()
-    public List<Meeting> getAll(
+    public List<MeetingResponseDto> getAll(
             @RequestParam @Nullable LocalDate eventDate,
             @RequestParam @Nullable List<Long> participantsId) {
         log.debug("Get meetings for date {} and participants {}", eventDate, participantsId);
