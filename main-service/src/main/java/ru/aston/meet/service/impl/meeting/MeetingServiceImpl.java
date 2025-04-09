@@ -33,6 +33,7 @@ public class MeetingServiceImpl implements MeetingService {
     private final MeetingMapper meetingMapper;
 
     @Override
+    @Transactional
     public MeetingDto create(MeetingDto meetingDto, User user) {
         Meeting newMeeting = meetingMapper.toMeeting(meetingDto);
         newMeeting.setInitiator(user);

@@ -20,7 +20,6 @@ CREATE TABLE IF NOT EXISTS meeting (
 
 CREATE TABLE IF NOT EXISTS invitations (
     id SERIAL PRIMARY KEY,
-    create_date TIMESTAMP NOT NULL,
     meeting_id BIGINT NOT NULL,
     invited_id BIGINT NOT NULL,
     status VARCHAR(50) NOT NULL,

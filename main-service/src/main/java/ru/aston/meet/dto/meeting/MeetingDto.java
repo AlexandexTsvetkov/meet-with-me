@@ -1,5 +1,6 @@
 package ru.aston.meet.dto.meeting;
 
+import jakarta.validation.constraints.Future;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
@@ -37,6 +38,7 @@ public class MeetingDto {
      * Дата прведения встречи.
      */
     @NotNull
+    @Future(message = "Дата встречи должна быть в будущем")
     private LocalDateTime eventDate;
 
     /*
