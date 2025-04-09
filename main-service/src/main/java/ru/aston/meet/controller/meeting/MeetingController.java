@@ -1,5 +1,7 @@
 package ru.aston.meet.controller.meeting;
 
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -29,6 +31,8 @@ import java.util.List;
 @Slf4j
 @RequiredArgsConstructor
 @RequestMapping(value = MeetingController.REST_URL, produces = MediaType.APPLICATION_JSON_VALUE)
+@Tag(name = "Meeting Controller", description = "Managing meetings")
+@SecurityRequirement(name = "Bearer Authentication")
 public class MeetingController {
 
     static final String REST_URL = "/meetings";

@@ -1,5 +1,7 @@
 package ru.aston.meet.controller.invitation;
 
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
@@ -7,7 +9,16 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.RestController;
 import ru.aston.meet.dto.invitation.CreateInvitationDto;
 import ru.aston.meet.dto.invitation.InvitationDto;
 import ru.aston.meet.dto.invitation.UpdateInvitationStatusDto;
@@ -20,6 +31,8 @@ import java.util.List;
 @RequestMapping("/invitations")
 @Slf4j
 @Validated
+@Tag(name = "Invitation Controller", description = "Managing invitation")
+@SecurityRequirement(name = "Bearer Authentication")
 public class InvitationController {
 
     private final InvitationService invitationService;
@@ -51,7 +64,7 @@ public class InvitationController {
     }
 
     @GetMapping("")
-    public InvitationDto getInvocationByUserAndMeeting(@RequestParam @Positive @NotNull Long user, @RequestParam  @Positive @NotNull Long meeting) {
+    public InvitationDto getInvocationByUserAndMeeting(@RequestParam @Positive @NotNull Long user, @RequestParam @Positive @NotNull Long meeting) {
         log.info("GET - /invitations?user ={}&meeting={}", user, meeting);
         return invitationService.getInvitationDtoByUserAndMeeting(user, meeting);
     }
