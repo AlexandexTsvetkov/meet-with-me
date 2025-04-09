@@ -15,10 +15,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
-import ru.aston.meet.dto.MeetingDto;
-import ru.aston.meet.model.Meeting;
-import ru.aston.meet.model.User;
-import ru.aston.meet.service.MeetingService;
+import ru.aston.meet.dto.meeting.MeetingDto;
+import ru.aston.meet.model.meeting.Meeting;
+import ru.aston.meet.model.user.User;
+import ru.aston.meet.service.meeting.MeetingService;
 
 @RestController
 @Slf4j
