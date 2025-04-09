@@ -3,14 +3,14 @@ CREATE TABLE IF NOT EXISTS app_user (
          email VARCHAR(255) NOT NULL UNIQUE,
          name VARCHAR(255) NOT NULL,
          password VARCHAR(255) NOT NULL,
-         status VARCHAR(50),
-         blocked BOOLEAN DEFAULT FALSE,
+--          status VARCHAR(50),
+--          blocked BOOLEAN DEFAULT FALSE,
          role VARCHAR(20) DEFAULT 'USER'
     );
 
 CREATE TABLE IF NOT EXISTS meeting (
     id SERIAL PRIMARY KEY,
-    create_on TIMESTAMP,
+    create_on TIMESTAMP DEFAULT (CURRENT_DATE),
     description VARCHAR(255),
     meeting_date TIMESTAMP,
     initiator_id BIGINT REFERENCES app_user(id),
