@@ -13,9 +13,11 @@ import ru.aston.meet.exception.InvitationException;
 import ru.aston.meet.exception.NotFoundException;
 import ru.aston.meet.mapper.meeting.MeetingMapper;
 import ru.aston.meet.model.meeting.Meeting;
+import ru.aston.meet.model.meeting.MeetingEventType;
 import ru.aston.meet.model.user.User;
 import ru.aston.meet.repository.meeting.MeetingRepository;
 import ru.aston.meet.service.meeting.MeetingService;
+import ru.aston.meet.service.notification.NotificationService;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -31,6 +33,7 @@ public class MeetingServiceImpl implements MeetingService {
 
     private final MeetingRepository meetingRepository;
     private final MeetingMapper meetingMapper;
+    private final NotificationService notificationService;
 
     @Override
     @Transactional
@@ -39,6 +42,8 @@ public class MeetingServiceImpl implements MeetingService {
         newMeeting.setInitiator(user);
         MeetingDto savedMeeting = meetingMapper.toMeetingDto(meetingRepository.save(newMeeting));
         log.debug("New meeting {} was created", savedMeeting);
+        notificationService.sendMeetingEvent(newMeeting, MeetingEventType.CREATE);
+
         return savedMeeting;
     }
 
@@ -95,6 +100,8 @@ public class MeetingServiceImpl implements MeetingService {
         Meeting updated = meetingRepository.save(meeting);
         log.debug("Meeting successfully updated by user with id {}", userId);
 
+        notificationService.sendMeetingEvent(updated, MeetingEventType.EDIT);
+
         return meetingMapper.toMeetingDto(updated);
     }
 
@@ -108,6 +115,8 @@ public class MeetingServiceImpl implements MeetingService {
 
         meetingRepository.deleteById(meetingId);
         log.debug("Meeting with id {} successfully deleted by user with id {}", meetingId, userId);
+
+        notificationService.sendMeetingEvent(meeting, MeetingEventType.DELETE);
     }
 
     @Override
