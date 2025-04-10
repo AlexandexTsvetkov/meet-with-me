@@ -14,6 +14,9 @@ import ru.aston.meet.model.user.User;
 import ru.aston.meet.repository.user.UserRepository;
 import ru.aston.meet.service.auth.AutheticationService;
 
+/**
+ * Сервисный слой для авторизации пользователей.
+ */
 @Service
 @RequiredArgsConstructor
 public class AuthenticationServiceImpl implements AutheticationService {

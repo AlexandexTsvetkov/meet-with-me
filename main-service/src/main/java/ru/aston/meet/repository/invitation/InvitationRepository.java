@@ -8,9 +8,18 @@ import java.util.Optional;
 
 public interface InvitationRepository extends JpaRepository<Invitation, Long> {
 
+    /**
+     * Возвращает приглашение по идентификатору пользователя и встречи
+     */
     Optional<Invitation> findByInvitedIdAndMeetingId(Long userId, Long meetingId);
 
+    /**
+     * Возвращает список приглашений по идентификатору встречи
+     */
     List<Invitation> findByMeetingId(Long meetingId);
 
+    /**
+     * Возвращает список приглашений по идентификатору пользователя
+     */
     List<Invitation> findByInvitedId(Long userId);
 }

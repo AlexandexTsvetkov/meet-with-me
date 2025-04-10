@@ -44,8 +44,10 @@ public class InvitationServiceImpl implements InvitationService {
         Long userId = request.getUserId();
         Long meetingId = request.getMeetingId();
 
-        Meeting meeting = meetingRepository.findById(meetingId).orElseThrow(() -> new NotFoundException("Meeting not found, id: " + meetingId));
-        User user = userRepository.findById(userId).orElseThrow(() -> new NotFoundException("User not found, id: " + userId));
+        Meeting meeting = meetingRepository.findById(meetingId)
+                .orElseThrow(() -> new NotFoundException("Meeting not found, id: " + meetingId));
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new NotFoundException("User not found, id: " + userId));
 
         Optional<Invitation> optionalInvitation = invitationRepository.findByInvitedIdAndMeetingId(userId, meetingId);
         if (optionalInvitation.isPresent()) {
@@ -58,24 +60,29 @@ public class InvitationServiceImpl implements InvitationService {
         newInvitation.setStatus(InvitationStatus.NEW);
 
         Invitation invitation = invitationRepository.save(newInvitation);
+        log.debug("New invitation {} was created", invitation);
 
         return invitationMapper.toInvitationDto(invitation);
     }
 
     @Override
     public InvitationDto getInvitationDto(Long id) {
-        return invitationMapper.toInvitationDto(invitationRepository.findById(id).orElseThrow());
+        return invitationMapper.toInvitationDto(findById(id));
     }
 
     @Override
     @Transactional
     public void deleteInvitation(Long id) {
         invitationRepository.deleteById(id);
+        log.debug("Invitation with id {} successfully deleted", id);
     }
 
     @Override
     public InvitationDto getInvitationDtoByUserAndMeeting(Long userId, Long meetingId) {
-        return invitationMapper.toInvitationDto(invitationRepository.findByInvitedIdAndMeetingId(userId, meetingId).orElseThrow(() -> new NotFoundException("Invitation not found, meetingId: " + meetingId + ", userId: " + userId)));
+        log.debug("Find invitation by userId = {} and meetingId = {}", userId, meetingId);
+        return invitationMapper.toInvitationDto(
+                invitationRepository.findByInvitedIdAndMeetingId(userId, meetingId)
+                        .orElseThrow(() -> new NotFoundException("Invitation not found, meetingId: " + meetingId + ", userId: " + userId)));
     }
 
     @Override
@@ -105,12 +112,18 @@ public class InvitationServiceImpl implements InvitationService {
 
     @Override
     public List<InvitationDto> invitationListByMeeting(Long id) {
-        return invitationRepository.findByMeetingId(id).stream().map(invitationMapper::toInvitationDto).collect(Collectors.toList());
+        log.debug("Find all invitations for meeting with id = {}", id);
+        return invitationRepository.findByMeetingId(id).stream()
+                .map(invitationMapper::toInvitationDto)
+                .collect(Collectors.toList());
     }
 
     @Override
     public List<InvitationDto> invitationListByInvited(Long id) {
-        return invitationRepository.findByInvitedId(id).stream().map(invitationMapper::toInvitationDto).collect(Collectors.toList());
+        log.debug("Find all invitations for invited user with id = {}", id);
+        return invitationRepository.findByInvitedId(id).stream()
+                .map(invitationMapper::toInvitationDto)
+                .collect(Collectors.toList());
     }
 
     private Invitation findById(long invitationId) {

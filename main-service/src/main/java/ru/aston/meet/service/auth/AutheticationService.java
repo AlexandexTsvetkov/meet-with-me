@@ -6,6 +6,13 @@ import ru.aston.meet.dto.auth.RegisterRequest;
 
 public interface AutheticationService {
 
+    /**
+     * Авторизует пользователя по логину и паролю
+     */
     AuthenticationResponse register(RegisterRequest registerRequest);
+
+    /**
+     * Аутентифицирует пользователя по логину и паролю
+     */
     AuthenticationResponse authenticate(AuthenticationRequest authenticationRequest);
 }

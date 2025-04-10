@@ -6,6 +6,12 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+/**
+ * Входной DTO (Data Transfer Object) для нового приглашения.
+ *
+ * <p>{@link #meetingId} - Идентификатор встречи.</p>
+ * <p>{@link #userId} - Идентификатор приглашенного пользователя.</p>
+ */
 @Getter
 @Setter
 @NoArgsConstructor
