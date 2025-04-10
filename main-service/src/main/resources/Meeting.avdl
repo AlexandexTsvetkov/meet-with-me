@@ -1,0 +1,28 @@
+@namespace("ru.aston.meet.kafka.notifications.meeting")
+protocol MeetingProtocol {
+
+	record CreateMeetingAvro {
+		string title;
+		string description;
+		timestamp_ms eventDate;
+		string initiatorName;
+		string initiatorEmail;
+		string location;
+	}
+
+	record DeleteMeetingAvro {
+	}
+
+	record EditMeetingAvro {
+		string title;
+		string description;
+		timestamp_ms eventDate;
+		string location;
+	}
+
+	record MeetingAvro {
+		string id;
+		timestamp_ms timestamp;
+		union {CreateMeetingAvro, DeleteMeetingAvro, EditMeetingAvro} payload;
+	}
+}

@@ -11,6 +11,7 @@ import ru.aston.meet.exception.AlreadyExistsException;
 import ru.aston.meet.exception.InvitationException;
 import ru.aston.meet.exception.NotFoundException;
 import ru.aston.meet.mapper.invitation.InvitationMapper;
+import ru.aston.meet.mapper.user.PartipantEventType;
 import ru.aston.meet.model.invitation.Invitation;
 import ru.aston.meet.model.invitation.InvitationStatus;
 import ru.aston.meet.model.meeting.Meeting;
@@ -20,6 +21,7 @@ import ru.aston.meet.repository.meeting.MeetingRepository;
 import ru.aston.meet.repository.user.UserRepository;
 import ru.aston.meet.service.invitation.InvitationService;
 import ru.aston.meet.service.meeting.MeetingService;
+import ru.aston.meet.service.notification.NotificationService;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -36,6 +38,7 @@ public class InvitationServiceImpl implements InvitationService {
     private final InvitationMapper invitationMapper;
     private final MeetingRepository meetingRepository;
     private final MeetingService meetingService;
+    private final NotificationService notificationService;
 
     @Override
     @Transactional
@@ -61,6 +64,8 @@ public class InvitationServiceImpl implements InvitationService {
 
         Invitation invitation = invitationRepository.save(newInvitation);
         log.debug("New invitation {} was created", invitation);
+
+        notificationService.sendInvitation(invitation);
 
         return invitationMapper.toInvitationDto(invitation);
     }
@@ -101,8 +106,10 @@ public class InvitationServiceImpl implements InvitationService {
 
         if (newStatus == InvitationStatus.CONFIRMED) {
             meetingService.addConfirmedParticipants(meeting, userId);
+            notificationService.sendPartipant(meeting, invitation.getInvited(), PartipantEventType.ADD);
         } else if (newStatus == InvitationStatus.CANCELLED) {
             meetingService.deleteConfirmedParticipants(meeting, userId);
+            notificationService.sendPartipant(meeting, invitation.getInvited(), PartipantEventType.DELETE);
         }
 
         Invitation updated = invitationMapper.mapInvitationToUpdate(request, invitation);
