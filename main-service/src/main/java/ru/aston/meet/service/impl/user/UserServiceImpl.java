@@ -10,6 +10,7 @@ import ru.aston.meet.model.user.User;
 import ru.aston.meet.repository.user.UserRepository;
 import ru.aston.meet.service.user.UserService;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -30,5 +31,11 @@ public class UserServiceImpl implements UserService {
         } else {
             throw new NotFoundException("User not found, email: " + email);
         }
+    }
+
+    @Override
+    public List<UserDto> getAll() {
+        log.debug("Get all users");
+        return userRepository.findAll().stream().map(userMapper::toUserDto).toList();
     }
 }

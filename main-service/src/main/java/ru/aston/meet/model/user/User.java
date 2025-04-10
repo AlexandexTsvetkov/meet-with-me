@@ -9,9 +9,15 @@ import org.springframework.security.core.userdetails.UserDetails;
 import java.util.Collection;
 import java.util.List;
 
-/*
+/**
  * Класс, представляющий пользователя в системе.
  * Реализует интерфейс UserDetails для интеграции с Spring Security.
+ *
+ * <p>{@link #id} - Идентификатор.</p>
+ * <p>{@link #email} - Почта. Должна быть уникальной.</p>
+ * <p>{@link #name} - Имя пользователя.</p>
+ * <p>{@link #password} - Пароль.</p>
+ * <p>{@link #role} - Роль. Значение по умолчанию: USER.</p>
  */
 @Getter
 @Setter
@@ -26,38 +32,12 @@ public class User implements UserDetails {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    /*
-     * Электронная почта пользователя.
-     * Должна быть уникальной.
-     */
     private String email;
 
-    /*
-     * Имя пользователя.
-     */
     private String name;
 
-    /*
-     * Пароль пользователя.
-     */
     private String password;
 
-//    /*
-//     * Статус пользователя.
-//     * Например, может обозначать активность или неактивность.
-//     */
-//    private String status;
-//
-//    /*
-//     * Статус блокировки пользователя.
-//     * Указывает, заблокирован ли пользователь.
-//     */
-//    private Boolean blocked = false;
-
-    /*
-     * Роль пользователя в системе.
-     * Значение по умолчанию: USER.
-     */
     @Enumerated(EnumType.STRING)
     private Role role = Role.USER;
 

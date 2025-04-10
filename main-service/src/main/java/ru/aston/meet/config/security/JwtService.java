@@ -16,6 +16,9 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
 
+/**
+ * Сервисный слой для генерации токена.
+ */
 @Service
 public class JwtService {
 

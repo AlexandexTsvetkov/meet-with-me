@@ -9,8 +9,9 @@ import org.springdoc.core.models.GroupedOpenApi;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-/*
- * Swagger доступен по :
+/**
+ * Конфигурация для Swagger
+ * Доступен по :
  * http://localhost:8080/swagger-ui.html
  * или
  * http://localhost:8080/swagger-ui/index.html

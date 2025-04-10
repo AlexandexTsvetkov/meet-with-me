@@ -134,13 +134,13 @@ public class MeetingServiceImpl implements MeetingService {
         Set<Long> participants = meeting.getParticipants();
         Long meetingId = meeting.getId();
 
-        if (!participants.contains(userId)) {
-            throw new InvitationException("User with id " + userId + " is not a participant of meeting with id " + meetingId);
+        if (participants.contains(userId)) {
+            participants.remove(userId);
+            meetingRepository.save(meeting);
+            log.debug("Participant with id {} was removed from meeting with id {}", userId, meetingId);
+        } else {
+            log.debug("User with id {} is not a participant of meeting with id {}", userId, meetingId);
         }
-
-        participants.remove(userId);
-        meetingRepository.save(meeting);
-        log.debug("Participant with id {} was removed from meeting with id {}", userId, meetingId);
     }
 
     private void verifyCanEdit(Meeting meeting, long userId) {

@@ -1,5 +1,6 @@
 package ru.aston.meet.controller.meeting;
 
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
@@ -40,34 +41,43 @@ public class MeetingController {
     private final MeetingService meetingService;
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
+    @Operation(summary = "Create a new meeting", description = "Creates a new meeting with the specified details")
     @ResponseStatus(HttpStatus.OK)
-    public MeetingDto create(@Valid @RequestBody MeetingDto meetingDto, @AuthenticationPrincipal User user) {
+    public MeetingDto create(@Valid @RequestBody MeetingDto meetingDto,
+                             @AuthenticationPrincipal User user) {
         log.debug("Create a new meeting {}", meetingDto);
         return meetingService.create(meetingDto, user);
     }
 
     @PutMapping(value = "/{meetingId}", consumes = MediaType.APPLICATION_JSON_VALUE)
+    @Operation(summary = "Update meeting details", description = "Updates the details of the specified meeting")
     @ResponseStatus(HttpStatus.OK)
-    public MeetingDto update(@PathVariable long meetingId, @Valid @RequestBody MeetingDto meetingDto, @AuthenticationPrincipal User user) {
+    public MeetingDto update(@PathVariable long meetingId,
+                             @Valid @RequestBody MeetingDto meetingDto,
+                             @AuthenticationPrincipal User user) {
         log.debug("Update meeting with id {}", meetingId);
 
         return meetingService.update(meetingId, meetingDto, user.getId());
     }
 
     @DeleteMapping("/{meetingId}")
+    @Operation(summary = "Delete meeting", description = "Deletes the specified meeting")
     @ResponseStatus(HttpStatus.OK)
-    public void delete(@PathVariable long meetingId, @AuthenticationPrincipal User user) {
+    public void delete(@PathVariable long meetingId,
+                       @AuthenticationPrincipal User user) {
         log.debug("Delete meeting with id {}", meetingId);
         meetingService.delete(meetingId, user.getId());
     }
 
     @GetMapping("/{meetingId}")
+    @Operation(summary = "Get meeting details by id", description = "Gets the details of the specified meeting")
     public MeetingResponseDto get(@PathVariable long meetingId) {
         log.debug("Get the meeting with id {}", meetingId);
         return meetingService.get(meetingId);
     }
 
     @GetMapping()
+    @Operation(summary = "Get meetings details", description = "Gets the details of the list of meetings filtered by event date and participants")
     public List<MeetingResponseDto> getAll(
             @RequestParam @Nullable LocalDate eventDate,
             @RequestParam @Nullable List<Long> participantsId) {
