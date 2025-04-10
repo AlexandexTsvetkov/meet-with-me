@@ -1,0 +1,15 @@
+spring:
+  application:
+    name: notification
+
+  mail:
+    host: ${SMTP_HOST:smtp.msndr.net}
+    port: ${SMTP_PORT:587}
+    username: ${SMTP_USER:user@mail.ru}
+    password: ${SMTP_PASSWORD:password}
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
