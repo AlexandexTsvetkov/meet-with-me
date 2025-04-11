@@ -4,22 +4,25 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Service;
 import ru.aston.meet.kafka.notifications.invitation.InvitationAvro;
-import ru.aston.meet.kafka.notifications.meeting.MeetingAvro;
 import ru.aston.meet.kafka.notifications.meeting.CreateMeetingAvro;
 import ru.aston.meet.kafka.notifications.meeting.DeleteMeetingAvro;
 import ru.aston.meet.kafka.notifications.meeting.EditMeetingAvro;
-import ru.aston.meet.kafka.notifications.partipant.ParticipantAvro;
+import ru.aston.meet.kafka.notifications.meeting.InvitedUser;
+import ru.aston.meet.kafka.notifications.meeting.MeetingAvro;
+import ru.aston.notification.util.TemplateProcessor;
 
-import java.sql.Timestamp;
+import java.io.IOException;
 import java.time.Instant;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
+import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
 public class NotificationKafkaListener {
 
     private final NotificationService notificationService;
+    private final TemplateProcessor templateProcessor;
 
     @KafkaListener(
             topics = "${kafka.config.meeting-topic}",
@@ -40,17 +43,7 @@ public class NotificationKafkaListener {
             }
     )
     public void listenInvitationEvents(InvitationAvro invitation) {
-
-    }
-
-    @KafkaListener(
-            topics = "${kafka.config.partipant-topic}",
-            groupId = "${kafka.config.group-id}",
-            properties = {
-                    "value.deserializer=ru.aston.notification.util.deserializer.impl.ParticipantAvroDeserializer"
-            }
-    )
-    public void listenParticipantEvents(ParticipantAvro participant) {
+        sendInvitationMessage(invitation);
     }
 
     private void sendMeetingMessage(MeetingAvro meeting) {
@@ -60,12 +53,31 @@ public class NotificationKafkaListener {
             String htmlMessage = createMeetingEmailHtml(createPayload);
             notificationService.sendEmail(createPayload.getInitiatorEmail(), "Создана новая встреча: " + createPayload.getTitle(), htmlMessage);
         } else if (payload instanceof EditMeetingAvro) {
-            // Обработка EditMeetingAvro
             EditMeetingAvro editPayload = (EditMeetingAvro) payload;
+            String htmlMessage = editMeetingEmailHtml(editPayload);
+            notifyInvitedUsers(editPayload.getInvited(), "Изменение встречи: " + editPayload.getTitle(), htmlMessage);
         } else if (payload instanceof DeleteMeetingAvro) {
-            // Обработка DeleteMeetingAvro
             DeleteMeetingAvro deletePayload = (DeleteMeetingAvro) payload;
+            String htmlMessage = deleteMeetingEmailHtml(deletePayload);
+            notifyInvitedUsers(deletePayload.getInvited(), "Отмена встречи: " + deletePayload.getTitle(), htmlMessage);
+
         }
+    }
+
+    private void sendInvitationMessage(InvitationAvro invitation) {
+        String htmlMessage = loadTemplate("invitation", Map.of(
+                "title", invitation.getTitle(),
+                "description", invitation.getDescription(),
+                "eventDate", formatDateTime(invitation.getEventDate()),
+                "location", invitation.getLocation(),
+                "initiatorName", invitation.getInitiatorName()
+        ));
+
+        notificationService.sendEmail(
+                invitation.getInvitedEmail(),
+                "Вас пригласили на встречу: " + invitation.getTitle(),
+                htmlMessage
+        );
     }
 
     private String formatDateTime(Instant instant) {
@@ -76,42 +88,43 @@ public class NotificationKafkaListener {
     }
 
     public String createMeetingEmailHtml(CreateMeetingAvro meeting) {
-        return """
-                <!DOCTYPE html>
-                <html>
-                <head>
-                    <style>
-                        body { font-family: Arial, sans-serif; line-height: 1.6; }
-                        .container { max-width: 600px; margin: 0 auto; padding: 20px; }
-                        .header { color: #2c3e50; border-bottom: 1px solid #eee; padding-bottom: 10px; }
-                        .details { margin: 20px 0; }
-                        .footer { margin-top: 20px; font-size: 0.9em; color: #7f8c8d; }
-                    </style>
-                </head>
-                <body>
-                    <div class="container">
-                        <h1 class="header">Новая встреча: %s</h1>
-                
-                        <div class="details">
-                            <p><strong>Описание:</strong> %s</p>
-                            <p><strong>Дата и время:</strong> %s</p>
-                            <p><strong>Место проведения:</strong> %s</p>
-                            <p><strong>Организатор:</strong> %s (%s)</p>
-                        </div>
-                
-                        <div class="footer">
-                            <p>Это письмо сгенерировано автоматически, пожалуйста, не отвечайте на него.</p>
-                        </div>
-                    </div>
-                </body>
-                </html>
-                """.formatted(
-                meeting.getTitle(),
-                meeting.getDescription(),
-                formatDateTime(meeting.getEventDate()),
-                meeting.getLocation(),
-                meeting.getInitiatorName(),
-                meeting.getInitiatorEmail()
-        );
+        return loadTemplate("create-meeting", Map.of(
+                "title", meeting.getTitle(),
+                "description", meeting.getDescription(),
+                "eventDate", formatDateTime(meeting.getEventDate()),
+                "location", meeting.getLocation(),
+                "initiatorName", meeting.getInitiatorName(),
+                "initiatorEmail", meeting.getInitiatorEmail()
+        ));
+    }
+
+    public String editMeetingEmailHtml(EditMeetingAvro meeting) {
+        return loadTemplate("edit-meeting", Map.of(
+                "title", meeting.getTitle(),
+                "description", meeting.getDescription(),
+                "eventDate", formatDateTime(meeting.getEventDate()),
+                "location", meeting.getLocation()
+        ));
+    }
+
+    public String deleteMeetingEmailHtml(DeleteMeetingAvro meeting) {
+        return loadTemplate("delete-meeting", Map.of(
+                "title", meeting.getTitle(),
+                "description", meeting.getDescription()
+        ));
+    }
+
+    private String loadTemplate(String templateName, Map<String, String> placeholders) {
+        try {
+            return templateProcessor.loadAndFillTemplate("templates/" + templateName + ".html", placeholders);
+        } catch (IOException e) {
+            throw new RuntimeException("Ошибка при загрузке шаблона " + templateName, e);
+        }
+    }
+
+    private void notifyInvitedUsers(Iterable<InvitedUser> users, String subject, String html) {
+        for (InvitedUser user : users) {
+            notificationService.sendEmail(user.getEmail(), subject, html);
+        }
     }
 }

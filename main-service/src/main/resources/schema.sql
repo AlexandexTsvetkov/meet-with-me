@@ -28,6 +28,6 @@ CREATE TABLE IF NOT EXISTS invitations (
 
 CREATE TABLE IF NOT EXISTS meeting_participant (
     id SERIAL PRIMARY KEY,
-    meeting_id BIGINT NOT NULL REFERENCES meeting(id),
+    meeting_id BIGINT NOT NULL REFERENCES meeting(id) ON DELETE CASCADE,
     user_id BIGINT NOT NULL REFERENCES app_user(id)
 );
