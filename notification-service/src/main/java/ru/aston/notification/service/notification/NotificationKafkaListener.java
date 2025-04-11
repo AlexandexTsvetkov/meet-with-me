@@ -9,6 +9,7 @@ import ru.aston.meet.kafka.notifications.meeting.DeleteMeetingAvro;
 import ru.aston.meet.kafka.notifications.meeting.EditMeetingAvro;
 import ru.aston.meet.kafka.notifications.meeting.InvitedUser;
 import ru.aston.meet.kafka.notifications.meeting.MeetingAvro;
+import ru.aston.meet.kafka.notifications.meeting.RemindMeetingAvro;
 import ru.aston.notification.util.TemplateProcessor;
 
 import java.io.IOException;
@@ -60,6 +61,10 @@ public class NotificationKafkaListener {
             DeleteMeetingAvro deletePayload = (DeleteMeetingAvro) payload;
             String htmlMessage = deleteMeetingEmailHtml(deletePayload);
             notifyInvitedUsers(deletePayload.getInvited(), "Отмена встречи: " + deletePayload.getTitle(), htmlMessage);
+        } else if (payload instanceof RemindMeetingAvro) {
+            RemindMeetingAvro remindPayload = (RemindMeetingAvro) payload;
+            String htmlMessage = remindMeetingEmailHtml(remindPayload);
+            notifyInvitedUsers(remindPayload.getInvited(), "Напоминание о встречи: " + remindPayload.getTitle() + " Встреча состоится Через 15 минут", htmlMessage);
         }
     }
 
@@ -84,6 +89,17 @@ public class NotificationKafkaListener {
                 .ofPattern("dd.MM.yyyy HH:mm")
                 .withZone(ZoneId.systemDefault())
                 .format(instant);
+    }
+
+    private String remindMeetingEmailHtml(RemindMeetingAvro meeting) {
+        return loadTemplate("remind-meeting", Map.of(
+                "title", meeting.getTitle(),
+                "description", meeting.getDescription(),
+                "eventDate", formatDateTime(meeting.getEventDate()),
+                "location", meeting.getLocation(),
+                "initiatorName", meeting.getInitiatorName(),
+                "initiatorEmail", meeting.getInitiatorEmail()
+        ));
     }
 
     public String createMeetingEmailHtml(CreateMeetingAvro meeting) {
