@@ -3,8 +3,6 @@ CREATE TABLE IF NOT EXISTS app_user (
          email VARCHAR(255) NOT NULL UNIQUE,
          name VARCHAR(255) NOT NULL,
          password VARCHAR(255) NOT NULL,
---          status VARCHAR(50),
---          blocked BOOLEAN DEFAULT FALSE,
          role VARCHAR(20) DEFAULT 'USER'
     );
 

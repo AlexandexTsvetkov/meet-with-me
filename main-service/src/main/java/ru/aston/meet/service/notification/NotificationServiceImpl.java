@@ -20,6 +20,7 @@ import ru.aston.meet.model.user.User;
 import ru.aston.meet.util.KafkaProperties;
 
 import java.time.Instant;
+import java.util.List;
 
 @Service
 @Slf4j
@@ -33,9 +34,9 @@ public class NotificationServiceImpl implements NotificationService {
     private final ParticipantAvroMapper participantAvroMapper;
 
     @Override
-    public void sendMeetingEvent(Meeting meeting, MeetingEventType meetingEventType) {
+    public void sendMeetingEvent(Meeting meeting, MeetingEventType meetingEventType, List<User> users) {
 
-        MeetingAvro meetingAvro = meetingAvroMapper.mapToMeetingAvro(meeting, meetingEventType);
+        MeetingAvro meetingAvro = meetingAvroMapper.mapToMeetingAvro(meeting, meetingEventType, users);
 
         producer.send(new ProducerRecord<>(kafkaProperties.getMeetingTopic(),
                 null,
