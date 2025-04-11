@@ -10,6 +10,8 @@ import java.util.List;
 
 public interface NotificationService {
     void sendMeetingEvent(Meeting meeting, MeetingEventType meetingEventType, List<User> users);
+
     void sendInvitation(Invitation invitation);
+
     void sendPartipant(Meeting meeting, User user, PartipantEventType partipantEventType);
 }

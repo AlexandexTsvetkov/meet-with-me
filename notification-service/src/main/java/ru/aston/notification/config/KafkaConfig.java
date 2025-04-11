@@ -1,18 +1,16 @@
 package ru.aston.notification.config;
 
-import com.fasterxml.jackson.databind.deser.std.StringDeserializer;
 import lombok.RequiredArgsConstructor;
+import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.kafka.annotation.EnableKafka;
-import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.springframework.kafka.config.ConcurrentKafkaListenerContainerFactory;
 import org.springframework.kafka.core.ConsumerFactory;
 import org.springframework.kafka.core.DefaultKafkaConsumerFactory;
 import org.springframework.kafka.support.serializer.ErrorHandlingDeserializer;
 import ru.aston.notification.util.KafkaProperties;
-import ru.aston.notification.util.deserializer.BaseAvroDeserializer;
 
 import java.util.HashMap;
 import java.util.Map;

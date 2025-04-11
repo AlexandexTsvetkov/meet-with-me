@@ -18,6 +18,8 @@ protocol MeetingProtocol {
 	record DeleteMeetingAvro {
 		string title;
 		string description;
+		string initiatorName;
+		string initiatorEmail;
 		array<InvitedUser> invited;
 	}
 
@@ -35,6 +37,8 @@ protocol MeetingProtocol {
 		string title;
 		string description;
 		timestamp_ms eventDate;
+		string initiatorName;
+		string initiatorEmail;
 		string location;
 		array<InvitedUser> invited;
 	}

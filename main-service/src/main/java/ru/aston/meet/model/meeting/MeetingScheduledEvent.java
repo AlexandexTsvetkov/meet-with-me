@@ -1,4 +1,5 @@
 package ru.aston.meet.model.meeting;
+
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 

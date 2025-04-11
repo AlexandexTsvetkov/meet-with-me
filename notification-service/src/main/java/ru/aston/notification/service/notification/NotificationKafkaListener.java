@@ -4,12 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Service;
 import ru.aston.meet.kafka.notifications.invitation.InvitationAvro;
-import ru.aston.meet.kafka.notifications.meeting.CreateMeetingAvro;
-import ru.aston.meet.kafka.notifications.meeting.DeleteMeetingAvro;
-import ru.aston.meet.kafka.notifications.meeting.EditMeetingAvro;
-import ru.aston.meet.kafka.notifications.meeting.InvitedUser;
-import ru.aston.meet.kafka.notifications.meeting.MeetingAvro;
-import ru.aston.meet.kafka.notifications.meeting.RemindMeetingAvro;
+import ru.aston.meet.kafka.notifications.meeting.*;
 import ru.aston.notification.util.TemplateProcessor;
 
 import java.io.IOException;
@@ -56,15 +51,15 @@ public class NotificationKafkaListener {
         } else if (payload instanceof EditMeetingAvro) {
             EditMeetingAvro editPayload = (EditMeetingAvro) payload;
             String htmlMessage = editMeetingEmailHtml(editPayload);
-            notifyInvitedUsers(editPayload.getInvited(), "Изменение встречи: " + editPayload.getTitle(), htmlMessage);
+            notifyInvitedUsers(editPayload.getInvited(), editPayload.getInitiatorEmail(), "Изменение встречи: " + editPayload.getTitle(), htmlMessage);
         } else if (payload instanceof DeleteMeetingAvro) {
             DeleteMeetingAvro deletePayload = (DeleteMeetingAvro) payload;
             String htmlMessage = deleteMeetingEmailHtml(deletePayload);
-            notifyInvitedUsers(deletePayload.getInvited(), "Отмена встречи: " + deletePayload.getTitle(), htmlMessage);
+            notifyInvitedUsers(deletePayload.getInvited(), deletePayload.getInitiatorEmail(), "Отмена встречи: " + deletePayload.getTitle(), htmlMessage);
         } else if (payload instanceof RemindMeetingAvro) {
             RemindMeetingAvro remindPayload = (RemindMeetingAvro) payload;
             String htmlMessage = remindMeetingEmailHtml(remindPayload);
-            notifyInvitedUsers(remindPayload.getInvited(), "Напоминание о встречи: " + remindPayload.getTitle() + " Встреча состоится Через 15 минут", htmlMessage);
+            notifyInvitedUsers(remindPayload.getInvited(), remindPayload.getInitiatorEmail(), "Напоминание о встречи: " + remindPayload.getTitle() + " Встреча состоится Через 15 минут", htmlMessage);
         }
     }
 
@@ -137,7 +132,8 @@ public class NotificationKafkaListener {
         }
     }
 
-    private void notifyInvitedUsers(Iterable<InvitedUser> users, String subject, String html) {
+    private void notifyInvitedUsers(Iterable<InvitedUser> users, String email, String subject, String html) {
+        notificationService.sendEmail(email, subject, html);
         for (InvitedUser user : users) {
             notificationService.sendEmail(user.getEmail(), subject, html);
         }

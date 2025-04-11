@@ -29,7 +29,12 @@ public enum MeetingEventType {
     DELETE {
         @Override
         public SpecificRecordBase mapToMeetEventSpecificRecordBase(Meeting meeting, List<User> users) {
+
+            User initiator = meeting.getInitiator();
+
             return DeleteMeetingAvro.newBuilder()
+                    .setInitiatorName(initiator.getName())
+                    .setInitiatorEmail(initiator.getEmail())
                     .setInvited(users.stream().map(user -> InvitedUser.newBuilder().setEmail(user.getEmail()).setName(user.getName()).build()).collect(Collectors.toList()))
                     .build();
         }
@@ -56,11 +61,15 @@ public enum MeetingEventType {
         @Override
         public SpecificRecordBase mapToMeetEventSpecificRecordBase(Meeting meeting, List<User> users) {
 
+            User initiator = meeting.getInitiator();
+
             return EditMeetingAvro.newBuilder()
                     .setDescription(meeting.getDescription())
                     .setEventDate(meeting.getEventDate().atZone(ZoneId.systemDefault())
                             .toInstant())
                     .setTitle(meeting.getTitle())
+                    .setInitiatorName(initiator.getName())
+                    .setInitiatorEmail(initiator.getEmail())
                     .setInvited(users.stream().map(user -> InvitedUser.newBuilder().setEmail(user.getEmail()).setName(user.getName()).build()).collect(Collectors.toList()))
                     .setLocation(meeting.getLocation())
                     .build();
