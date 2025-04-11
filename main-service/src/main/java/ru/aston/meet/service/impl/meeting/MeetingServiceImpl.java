@@ -3,6 +3,7 @@ package ru.aston.meet.service.impl.meeting;
 import jakarta.persistence.criteria.Join;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -14,9 +15,11 @@ import ru.aston.meet.exception.NotFoundException;
 import ru.aston.meet.mapper.meeting.MeetingMapper;
 import ru.aston.meet.model.meeting.Meeting;
 import ru.aston.meet.model.meeting.MeetingEventType;
+import ru.aston.meet.model.meeting.MeetingScheduledEvent;
 import ru.aston.meet.model.user.User;
 import ru.aston.meet.repository.meeting.MeetingRepository;
 import ru.aston.meet.repository.user.UserRepository;
+import ru.aston.meet.service.meeting.MeetingEventHandler;
 import ru.aston.meet.service.meeting.MeetingService;
 import ru.aston.meet.service.notification.NotificationService;
 
@@ -37,15 +40,20 @@ public class MeetingServiceImpl implements MeetingService {
     private final MeetingMapper meetingMapper;
     private final NotificationService notificationService;
     private final UserRepository userRepository;
+    private final ApplicationEventPublisher eventPublisher;
+    private final MeetingEventHandler meetingEventHandler;
 
     @Override
     @Transactional
     public MeetingDto create(MeetingDto meetingDto, User user) {
         Meeting newMeeting = meetingMapper.toMeeting(meetingDto);
         newMeeting.setInitiator(user);
-        MeetingDto savedMeeting = meetingMapper.toMeetingDto(meetingRepository.save(newMeeting));
+        Meeting createdMeeting = meetingRepository.save(newMeeting);
+        MeetingDto savedMeeting = meetingMapper.toMeetingDto(createdMeeting);
         log.debug("New meeting {} was created", savedMeeting);
         notificationService.sendMeetingEvent(newMeeting, MeetingEventType.CREATE, new ArrayList<>());
+
+        eventPublisher.publishEvent(new MeetingScheduledEvent(createdMeeting));
 
         return savedMeeting;
     }
@@ -107,6 +115,8 @@ public class MeetingServiceImpl implements MeetingService {
 
         notificationService.sendMeetingEvent(updated, MeetingEventType.EDIT, users);
 
+        eventPublisher.publishEvent(new MeetingScheduledEvent(updated));
+
         return meetingMapper.toMeetingDto(updated);
     }
 
@@ -124,6 +134,8 @@ public class MeetingServiceImpl implements MeetingService {
         List<User> users = userRepository.findUsersByMeetingId(meetingId);
 
         notificationService.sendMeetingEvent(meeting, MeetingEventType.DELETE, users);
+
+        meetingEventHandler.cancelScheduledNotification(meetingId);
     }
 
     @Override

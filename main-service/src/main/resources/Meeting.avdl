@@ -21,6 +21,16 @@ protocol MeetingProtocol {
 		array<InvitedUser> invited;
 	}
 
+	record RemindMeetingAvro {
+		string title;
+		string description;
+		timestamp_ms eventDate;
+		string initiatorName;
+		string initiatorEmail;
+		string location;
+		array<InvitedUser> invited;
+	}
+
 	record EditMeetingAvro {
 		string title;
 		string description;
