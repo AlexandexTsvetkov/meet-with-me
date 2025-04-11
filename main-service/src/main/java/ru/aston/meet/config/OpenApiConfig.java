@@ -12,9 +12,9 @@ import org.springframework.context.annotation.Configuration;
 /**
  * Конфигурация для Swagger
  * Доступен по :
- * http://localhost:8080/swagger-ui.html
+ * http://localhost:8081/swagger-ui.html
  * или
- * http://localhost:8080/swagger-ui/index.html
+ * http://localhost:8081/swagger-ui/index.html
  */
 @Configuration
 @SecurityScheme(

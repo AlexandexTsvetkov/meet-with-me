@@ -1,7 +1,10 @@
 package ru.aston.meet.model.invitation;
 
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import ru.aston.meet.model.meeting.Meeting;
 import ru.aston.meet.model.user.User;
 

@@ -3,8 +3,6 @@ CREATE TABLE IF NOT EXISTS app_user (
          email VARCHAR(255) NOT NULL UNIQUE,
          name VARCHAR(255) NOT NULL,
          password VARCHAR(255) NOT NULL,
---          status VARCHAR(50),
---          blocked BOOLEAN DEFAULT FALSE,
          role VARCHAR(20) DEFAULT 'USER'
     );
 
@@ -30,6 +28,6 @@ CREATE TABLE IF NOT EXISTS invitations (
 
 CREATE TABLE IF NOT EXISTS meeting_participant (
     id SERIAL PRIMARY KEY,
-    meeting_id BIGINT NOT NULL REFERENCES meeting(id),
+    meeting_id BIGINT NOT NULL REFERENCES meeting(id) ON DELETE CASCADE,
     user_id BIGINT NOT NULL REFERENCES app_user(id)
 );

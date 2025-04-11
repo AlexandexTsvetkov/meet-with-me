@@ -21,7 +21,7 @@ spring:
       mode: always
 
 server:
-  port: 8080
+  port: 8081
 
 application:
   security:
@@ -39,3 +39,13 @@ logging:
 springdoc:
   swagger-ui:
     path: /
+
+kafka:
+  config:
+    bootstrap-servers: localhost:9092
+    client-id-config: producer-1
+    producer-key-serializer: org.apache.kafka.common.serialization.StringSerializer
+    producer-value-serializer: ru.aston.meet.util.GeneralAvroSerializer
+    meeting-topic: notifications.meets.v1
+    invitation-topic: notifications.invitations.v1
+    partipant-topic: notifications.partipants.v1
