@@ -42,6 +42,6 @@ protocol MeetingProtocol {
 	record MeetingAvro {
 		string id;
 		timestamp_ms timestamp;
-		union {CreateMeetingAvro, DeleteMeetingAvro, EditMeetingAvro} payload;
+		union {CreateMeetingAvro, DeleteMeetingAvro, EditMeetingAvro, RemindMeetingAvro} payload;
 	}
 }

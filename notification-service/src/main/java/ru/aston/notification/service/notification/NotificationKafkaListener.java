@@ -60,7 +60,6 @@ public class NotificationKafkaListener {
             DeleteMeetingAvro deletePayload = (DeleteMeetingAvro) payload;
             String htmlMessage = deleteMeetingEmailHtml(deletePayload);
             notifyInvitedUsers(deletePayload.getInvited(), "Отмена встречи: " + deletePayload.getTitle(), htmlMessage);
-
         }
     }
 
