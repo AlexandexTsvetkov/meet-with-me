@@ -1,6 +1,10 @@
 package ru.aston.meet.mapper.invitation;
 
-import org.mapstruct.*;
+import org.mapstruct.DecoratedWith;
+import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
+import org.mapstruct.MappingTarget;
+import org.mapstruct.MappingConstants;
 import ru.aston.meet.dto.invitation.InvitationDto;
 import ru.aston.meet.dto.invitation.UpdateInvitationStatusDto;
 import ru.aston.meet.mapper.impl.invitation.InvitationMapperDecorator;

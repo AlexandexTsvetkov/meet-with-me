@@ -1,7 +1,11 @@
 package ru.aston.meet.model.meeting;
 
 import org.apache.avro.specific.SpecificRecordBase;
-import ru.aston.meet.kafka.notifications.meeting.*;
+import ru.aston.meet.kafka.notifications.meeting.CreateMeetingAvro;
+import ru.aston.meet.kafka.notifications.meeting.DeleteMeetingAvro;
+import ru.aston.meet.kafka.notifications.meeting.InvitedUser;
+import ru.aston.meet.kafka.notifications.meeting.RemindMeetingAvro;
+import ru.aston.meet.kafka.notifications.meeting.EditMeetingAvro;
 import ru.aston.meet.model.user.User;
 
 import java.time.ZoneId;

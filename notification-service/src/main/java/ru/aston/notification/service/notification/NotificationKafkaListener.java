@@ -4,7 +4,12 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Service;
 import ru.aston.meet.kafka.notifications.invitation.InvitationAvro;
-import ru.aston.meet.kafka.notifications.meeting.*;
+import ru.aston.meet.kafka.notifications.meeting.MeetingAvro;
+import ru.aston.meet.kafka.notifications.meeting.CreateMeetingAvro;
+import ru.aston.meet.kafka.notifications.meeting.EditMeetingAvro;
+import ru.aston.meet.kafka.notifications.meeting.DeleteMeetingAvro;
+import ru.aston.meet.kafka.notifications.meeting.RemindMeetingAvro;
+import ru.aston.meet.kafka.notifications.meeting.InvitedUser;
 import ru.aston.notification.util.TemplateProcessor;
 
 import java.io.IOException;
