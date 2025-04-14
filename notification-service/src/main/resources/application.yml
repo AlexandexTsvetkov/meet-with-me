@@ -1,0 +1,27 @@
+spring:
+  application:
+    name: notification
+
+  mail:
+    host: ${SMTP_HOST:smtp.msndr.net}
+    port: ${SMTP_PORT:587}
+    username: ${SMTP_USER:a.kirillova@mail.astondevs.ru}
+    password: ${SMTP_PASSWORD:ff8fae7786bbf79cbd0d477d40bce875}
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+
+kafka:
+  config:
+    bootstrap-servers: localhost:9092
+    group-id: notification-group
+    client-id: consumer-1
+    key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+    value-deserializer: ru.aston.notification.util.deserializer.BaseAvroDeserializer
+    consume-attempt-timeout: 1000
+    meeting-topic: notifications.meets.v1
+    invitation-topic: notifications.invitations.v1
+    partipant-topic: notifications.partipants.v1

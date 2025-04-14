@@ -4,7 +4,7 @@ spring:
 
   datasource:
     driver-class-name: org.postgresql.Driver
-    url: jdbc:postgresql://localhost:6666/meet_db
+    url: jdbc:postgresql://localhost:5432/meet_db
     username: meet
     password: meet
 
@@ -21,7 +21,7 @@ spring:
       mode: always
 
 server:
-  port: 9090
+  port: 8081
 
 application:
   security:
@@ -30,3 +30,22 @@ application:
       expiration: 86400000 # a day
       refresh-token:
         expiration: 604800000 # 7 days
+
+logging:
+  level:
+    root: INFO
+    ru.aston.meet: DEBUG
+
+springdoc:
+  swagger-ui:
+    path: /
+
+kafka:
+  config:
+    bootstrap-servers: localhost:9092
+    client-id-config: producer-1
+    producer-key-serializer: org.apache.kafka.common.serialization.StringSerializer
+    producer-value-serializer: ru.aston.meet.util.GeneralAvroSerializer
+    meeting-topic: notifications.meets.v1
+    invitation-topic: notifications.invitations.v1
+    partipant-topic: notifications.partipants.v1

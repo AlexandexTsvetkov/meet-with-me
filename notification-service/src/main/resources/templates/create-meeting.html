@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        body { font-family: Arial, sans-serif; line-height: 1.6; }
+        .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+        .header { color: #2c3e50; border-bottom: 1px solid #eee; padding-bottom: 10px; }
+        .details { margin: 20px 0; }
+        .footer { margin-top: 20px; font-size: 0.9em; color: #7f8c8d; }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1 class="header">Новая встреча: {{title}}</h1>
+
+    <div class="details">
+        <p><strong>Описание:</strong> {{description}}</p>
+        <p><strong>Дата и время:</strong> {{eventDate}}</p>
+        <p><strong>Место проведения:</strong> {{location}}</p>
+        <p><strong>Организатор:</strong> {{initiatorName}} ({{initiatorEmail}})</p>
+    </div>
+
+    <div class="footer">
+        <p>Это письмо сгенерировано автоматически, пожалуйста, не отвечайте на него.</p>
+    </div>
+</div>
+</body>
+</html>

@@ -17,6 +17,7 @@
 
     <modules>
         <module>main-service</module>
+        <module>notification-service</module>
     </modules>
 
 </project>

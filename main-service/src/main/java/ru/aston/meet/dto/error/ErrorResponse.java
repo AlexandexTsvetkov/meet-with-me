@@ -7,33 +7,25 @@ import lombok.Setter;
 
 import java.time.LocalDateTime;
 
-/*
+/**
  * Класс для представления ответа об ошибке.
+ *
+ * <p>{@link #status} - Статус HTTP ответа.</p>
+ * <p>{@link #reason} - Причина, по которой произошла ошибка.</p>
+ * <p>{@link #message} - Сообщение об ошибке, описывающее проблему.</p>
+ * <p>{@link #timestamp} - Время, когда произошла ошибка. Формат: "yyyy-MM-dd HH:mm:ss".</p>
  */
 @Builder
 @Getter
 @Setter
 public class ErrorResponse {
 
-    /*
-     * Статус HTTP ответа.
-     */
     private String status;
 
-    /*
-     * Причина, по которой произошла ошибка.
-     */
     private String reason;
 
-    /*
-     * Сообщение об ошибке, описывающее проблему.
-     */
     private String message;
 
-    /*
-     * Время, когда произошла ошибка.
-     * Формат: "yyyy-MM-dd HH:mm:ss".
-     */
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime timestamp;
 }

@@ -1,0 +1,18 @@
+@namespace("ru.aston.meet.kafka.notifications.partipant")
+protocol ParticipantProtocol {
+
+	record DeletePartipantAvro {
+	}
+
+	record AddPartipantAvro {
+		string name;
+		string email;
+	}
+
+	record ParticipantAvro {
+		string meetingId;
+		string id;
+		timestamp_ms timestamp;
+		union {AddPartipantAvro, DeletePartipantAvro} payload;
+	}
+}
