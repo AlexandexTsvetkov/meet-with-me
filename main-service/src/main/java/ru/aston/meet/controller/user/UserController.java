@@ -15,6 +15,10 @@ import ru.aston.meet.service.user.UserService;
 
 import java.util.List;
 
+/**
+ * Контроллер для управления пользователями.
+ * Предоставляет эндпоинты для получения списка пользователей и информации о конкретном пользователе.
+ */
 @RestController
 @RequestMapping("/users")
 @RequiredArgsConstructor
@@ -25,12 +29,23 @@ public class UserController {
 
     private final UserService userService;
 
+    /**
+     * Получить список всех пользователей.
+     *
+     * @return список {@link UserDto} всех пользователей
+     */
     @GetMapping
     @Operation(summary = "Get all users ", description = "Gets the list of users")
     public List<UserDto> getAll() {
         return userService.getAll();
     }
 
+    /**
+     * Получить информацию о пользователе по email.
+     *
+     * @param email email пользователя
+     * @return {@link ResponseEntity} с {@link UserDto} найденного пользователя
+     */
     @GetMapping("/{email}")
     @Operation(summary = "Get user details", description = "Gets the details of the specified user")
     public ResponseEntity<UserDto> getUserInfo(@PathVariable String email) {

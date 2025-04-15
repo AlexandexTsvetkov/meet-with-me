@@ -7,7 +7,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-/*
+/**
  * Класс, представляющий запрос на регистрацию пользователя.
  */
 @Getter
@@ -15,7 +15,7 @@ import lombok.Setter;
 @NoArgsConstructor
 public class RegisterRequest {
 
-    /*
+    /**
      * Электронная почта пользователя.
      * Должна быть действительной и не может быть пустой.
      */
@@ -23,14 +23,14 @@ public class RegisterRequest {
     @Email(message = "Email should be valid")
     private String email;
 
-    /*
+    /**
      * Имя пользователя.
      * Не должно быть пустым.
      */
     @NotBlank(message = "Name cannot be null or empty")
     private String name;
 
-    /*
+    /**
      * Пароль пользователя.
      * Не должен быть пустым и должен соответствовать следующим критериям:
      * - Минимум 6 и максимум 20 символов.

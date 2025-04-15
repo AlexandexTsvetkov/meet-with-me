@@ -7,7 +7,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-/*
+/**
  * Класс для представления запроса на аутентификацию пользователя.
  */
 @Getter
@@ -15,7 +15,7 @@ import lombok.Setter;
 @NoArgsConstructor
 public class AuthenticationRequest {
 
-    /*
+    /**
      * Электронная почта пользователя.
      * Должна быть действительной (соответствовать формату электронной почты).
      */
@@ -23,7 +23,7 @@ public class AuthenticationRequest {
     @Email(message = "Email should be valid")
     private String email;
 
-    /*
+    /**
      * Пароль пользователя.
      * Не должен быть пустым и должен соответствовать следующим критериям:
      * - Минимум 6 и максимум 20 символов

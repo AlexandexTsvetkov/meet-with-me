@@ -9,9 +9,18 @@ import ru.aston.meet.model.user.User;
 import java.time.Instant;
 import java.time.ZoneId;
 
+/**
+ * Класс-маппер, который преобразует объекты {@link Invitation} в объекты {@link InvitationAvro}.
+ */
 @Component
 public class InvitationAvroMapper {
 
+    /**
+     * Преобразует {@link Invitation} в {@link InvitationAvro}.
+     *
+     * @param invitation приглашение, которое нужно преобразовать
+     * @return преобразованный объект {@link InvitationAvro}
+     */
     public InvitationAvro mapToInvitationAvro(Invitation invitation) {
 
         Meeting meeting = invitation.getMeeting();

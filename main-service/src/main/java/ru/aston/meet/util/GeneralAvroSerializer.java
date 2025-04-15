@@ -11,10 +11,24 @@ import org.apache.kafka.common.serialization.Serializer;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
+/**
+ * Сериализатор объектов Avro для Kafka.
+ * Преобразует объекты, реализующие интерфейс SpecificRecordBase, в бинарный формат.
+ *
+ * @param <T> тип сериализуемого объекта, должен наследоваться от SpecificRecordBase
+ */
 public class GeneralAvroSerializer<T extends SpecificRecordBase> implements Serializer<T> {
     private final EncoderFactory encoderFactory = EncoderFactory.get();
     private BinaryEncoder encoder;
 
+    /**
+     * Сериализует объект Avro в массив байтов для отправки в Kafka.
+     *
+     * @param topic название топика Kafka, в который будут отправлены данные
+     * @param data объект для сериализации (может быть null)
+     * @return массив байтов в формате Avro или null, если передан null
+     * @throws SerializationException если произошла ошибка в процессе сериализации
+     */
     @Override
     public byte[] serialize(String topic, T data) {
         try (ByteArrayOutputStream out = new ByteArrayOutputStream()) {

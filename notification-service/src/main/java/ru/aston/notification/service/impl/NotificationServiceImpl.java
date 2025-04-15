@@ -9,6 +9,10 @@ import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 import ru.aston.notification.service.notification.NotificationService;
 
+/**
+ * Реализация сервиса для отправки email-уведомлений.
+ * Использует JavaMailSender для отправки электронных писем в формате MIME.
+ */
 @Service
 @RequiredArgsConstructor
 @Slf4j
@@ -19,6 +23,15 @@ public class NotificationServiceImpl implements NotificationService {
     @Value("${spring.mail.username}")
     private String sendFrom;
 
+    /**
+     * Отправляет электронное письмо указанному адресату.
+     *
+     * @param to адрес электронной почты получателя
+     * @param subject тема письма
+     * @param text содержимое письма в HTML-формате
+     * @throws RuntimeException если произошла ошибка при отправке письма (ошибка логируется)
+     */
+    @Override
     public void sendEmail(String to, String subject, String text) {
         try {
             MimeMessage mimeMessage = mailSender.createMimeMessage();
@@ -33,6 +46,7 @@ public class NotificationServiceImpl implements NotificationService {
             log.info("Письмо успешно отправлено на {}", to);
         } catch (Exception e) {
             log.error("Ошибка при отправке письма на {}: {}", to, e.getMessage(), e);
+            throw new RuntimeException("Не удалось отправить письмо", e);
         }
     }
 }

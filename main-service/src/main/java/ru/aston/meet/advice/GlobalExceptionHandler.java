@@ -12,6 +12,32 @@ import ru.aston.meet.exception.NotFoundException;
 
 import java.time.LocalDateTime;
 
+/**
+ * Глобальный обработчик исключений для REST контроллеров.
+ *
+ * <p>Перехватывает исключения, возникающие в процессе работы контроллеров,
+ * и преобразует их в стандартизированные ответы с соответствующими HTTP статусами.
+ *
+ * <p>Поддерживает обработку следующих типов исключений:
+ * <ul>
+ *   <li>{@link AlreadyExistsException} - конфликт существующих данных (HTTP 500)</li>
+ *   <li>{@link NotFoundException} - объект не найден (HTTP 404)</li>
+ *   <li>{@link InvitationException} - ошибка операции с приглашением (HTTP 400)</li>
+ *   <li>{@link AuthenticationException} - ошибка аутентификации (HTTP 401)</li>
+ *   <li>Общие исключения {@link Exception} (HTTP 500)</li>
+ * </ul>
+ *
+ * <p>Для каждого типа исключения формируется ответ {@link ErrorResponse},
+ * содержащий:
+ * <ul>
+ *   <li>HTTP статус</li>
+ *   <li>Причину ошибки</li>
+ *   <li>Сообщение об ошибке</li>
+ *   <li>Временную метку возникновения</li>
+ * </ul>
+ *
+ * @see ErrorResponse
+ */
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 

@@ -15,6 +15,10 @@ import ru.aston.notification.util.KafkaProperties;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Конфигурационный класс для настройки Kafka Consumer.
+ * Настраивает фабрики для создания consumer'ов и контейнеров слушателей Kafka.
+ */
 @Configuration
 @EnableKafka
 @EnableConfigurationProperties({KafkaProperties.class})
@@ -23,6 +27,12 @@ public class KafkaConfig {
 
     private final KafkaProperties kafkaProperties;
 
+    /**
+     * Создает фабрику consumer'ов Kafka с базовыми настройками.
+     *
+     * @return фабрика consumer'ов, настроенная с параметрами из KafkaProperties
+     * @see KafkaProperties
+     */
     @Bean
     public ConsumerFactory<String, Object> consumerFactory() {
         Map<String, Object> props = new HashMap<>();
@@ -37,6 +47,13 @@ public class KafkaConfig {
         return new DefaultKafkaConsumerFactory<>(props);
     }
 
+    /**
+     * Создает фабрику контейнеров слушателей Kafka.
+     * Использует consumerFactory для создания consumer'ов.
+     *
+     * @return фабрика контейнеров слушателей Kafka
+     * @see #consumerFactory()
+     */
     @Bean
     public ConcurrentKafkaListenerContainerFactory<String, Object> kafkaListenerContainerFactory() {
         ConcurrentKafkaListenerContainerFactory<String, Object> factory =

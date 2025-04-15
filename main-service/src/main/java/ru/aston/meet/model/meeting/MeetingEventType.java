@@ -12,7 +12,16 @@ import java.time.ZoneId;
 import java.util.List;
 import java.util.stream.Collectors;
 
+/**
+ * Перечисление типов событий встречи.
+ * Предоставляет методы для преобразования данных встречи в Avro-объекты
+ * для отправки уведомлений через Kafka.
+ */
 public enum MeetingEventType {
+    /**
+     * Событие создания встречи.
+     * Преобразует данные встречи в Avro-объект для создания встречи.
+     */
     CREATE {
         @Override
         public SpecificRecordBase mapToMeetEventSpecificRecordBase(Meeting meeting, List<User> users) {
@@ -30,6 +39,11 @@ public enum MeetingEventType {
                     .build();
         }
     },
+
+    /**
+     * Событие удаления встречи.
+     * Преобразует данные встречи в Avro-объект для удаления встречи.
+     */
     DELETE {
         @Override
         public SpecificRecordBase mapToMeetEventSpecificRecordBase(Meeting meeting, List<User> users) {
@@ -43,6 +57,11 @@ public enum MeetingEventType {
                     .build();
         }
     },
+
+    /**
+     * Событие редактирования встречи.
+     * Преобразует данные встречи в Avro-объект для редактирования встречи.
+     */
     EDIT {
         @Override
         public SpecificRecordBase mapToMeetEventSpecificRecordBase(Meeting meeting, List<User> users) {
@@ -61,6 +80,11 @@ public enum MeetingEventType {
                     .build();
         }
     },
+
+    /**
+     * Событие напоминания о встрече.
+     * Преобразует данные встречи в Avro-объект для напоминания о встрече.
+     */
     REMIND {
         @Override
         public SpecificRecordBase mapToMeetEventSpecificRecordBase(Meeting meeting, List<User> users) {
@@ -80,5 +104,12 @@ public enum MeetingEventType {
         }
     };
 
+    /**
+     * Абстрактный метод для преобразования данных встречи в соответствующий Avro-объект.
+     *
+     * @param meeting объект встречи, содержащий основные данные
+     * @param users список пользователей, приглашенных на встречу
+     * @return Avro-объект, соответствующий типу события
+     */
     public abstract SpecificRecordBase mapToMeetEventSpecificRecordBase(Meeting meeting, List<User> users);
 }

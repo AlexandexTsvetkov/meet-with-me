@@ -10,23 +10,20 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseStatus;
-import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PatchMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 import ru.aston.meet.dto.invitation.CreateInvitationDto;
 import ru.aston.meet.dto.invitation.InvitationDto;
 import ru.aston.meet.dto.invitation.UpdateInvitationStatusDto;
 import ru.aston.meet.service.invitation.InvitationService;
 
-import java.util.List;
-
+/**
+ * REST-контроллер для управления приглашениями.
+ * <p>
+ * Предоставляет API для создания, удаления, обновления и получения приглашений.
+ * Методы контроллера валидируют входные данные и обрабатывают запросы по пути "/invitations".
+ * Контроллер защищён с помощью Bearer Authentication.
+ * </p>
+ */
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/invitations")
@@ -38,6 +35,12 @@ public class InvitationController {
 
     private final InvitationService invitationService;
 
+    /**
+     * Создаёт новое приглашение с указанными данными.
+     *
+     * @param createInvitationDto объект с данными для создания приглашения
+     * @return созданное приглашение
+     */
     @PostMapping
     @Operation(summary = "Create a new invitation", description = "Creates a new invitation with the specified details")
     @ResponseStatus(HttpStatus.CREATED)
@@ -46,6 +49,11 @@ public class InvitationController {
         return invitationService.createInvitation(createInvitationDto);
     }
 
+    /**
+     * Удаляет приглашение по идентификатору.
+     *
+     * @param id идентификатор приглашения, должен быть положительным числом
+     */
     @DeleteMapping("/{id}")
     @Operation(summary = "Delete invitation", description = "Deletes the specified invitation")
     @ResponseStatus(value = HttpStatus.NO_CONTENT)
@@ -54,6 +62,11 @@ public class InvitationController {
         invitationService.deleteInvitation(id);
     }
 
+    /**
+     * Обновляет статус приглашения.
+     *
+     * @param updateInvitationStatusDto объект с данными для обновления статуса приглашения
+     */
     @PatchMapping()
     @Operation(summary = "Update invitation details", description = "Updates the details of the specified invitation")
     public void edit(@Valid @RequestBody UpdateInvitationStatusDto updateInvitationStatusDto) {
@@ -61,6 +74,12 @@ public class InvitationController {
         invitationService.updateInvitationStatus(updateInvitationStatusDto);
     }
 
+    /**
+     * Получает детали приглашения по его идентификатору.
+     *
+     * @param id идентификатор приглашения, должен быть положительным числом
+     * @return DTO с данными приглашения
+     */
     @GetMapping("/{id}")
     @Operation(summary = "Get invocation details by id", description = "Gets the details of the specified invocation")
     public InvitationDto getInvocationById(@PathVariable @NotNull @Positive Long id) {
@@ -68,25 +87,18 @@ public class InvitationController {
         return invitationService.getInvitationDto(id);
     }
 
+    /**
+     * Получает детали приглашения по идентификатору пользователя и идентификатору встречи.
+     *
+     * @param user идентификатор пользователя, должен быть положительным числом
+     * @param meeting идентификатор встречи, должен быть положительным числом
+     * @return DTO с данными приглашения
+     */
     @GetMapping()
     @Operation(summary = "Get invocation details by userId and meetingId", description = "Gets the details of the specified invocation")
     public InvitationDto getInvocationByUserAndMeeting(@RequestParam @Positive @NotNull Long user,
                                                        @RequestParam @Positive @NotNull Long meeting) {
         log.info("GET - /invitations?user ={}&meeting={}", user, meeting);
         return invitationService.getInvitationDtoByUserAndMeeting(user, meeting);
-    }
-
-    @GetMapping("/meeting/{id}")
-    @Operation(summary = "Get invocations details by meetingId", description = "Gets the details of the list of invocations")
-    public List<InvitationDto> getInvocationsByMeeting(@PathVariable @NotNull @Positive Long id) {
-        log.info("GET - /invitations/meeting/{}", id);
-        return invitationService.invitationListByMeeting(id);
-    }
-
-    @GetMapping("/user/{id}")
-    @Operation(summary = "Get invocations details by userId", description = "Gets the details of the specified list of invocations")
-    public List<InvitationDto> getInvocationsByInvited(@PathVariable @NotNull @Positive Long id) {
-        log.info("GET - /invitations/user/{}", id);
-        return invitationService.invitationListByInvited(id);
     }
 }
