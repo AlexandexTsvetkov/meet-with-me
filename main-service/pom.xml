@@ -185,14 +185,14 @@
                 <version>3.5.0</version>
                 <executions>
                     <execution>
-                        <id>add-source</id>
+                        <id>add-mapstruct-source</id>
                         <phase>generate-sources</phase>
                         <goals>
                             <goal>add-source</goal>
                         </goals>
                         <configuration>
                             <sources>
-                                <source>${project.build.directory}/generated-sources</source>
+                                <source>${project.build.directory}/generated-sources/annotations</source>
                             </sources>
                         </configuration>
                     </execution>
